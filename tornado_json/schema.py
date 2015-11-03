@@ -50,8 +50,8 @@ def validate(input_schema=None, output_schema=None,
         :raises APIError: If the output is a falsy value and
             on_empty_404 is True, an HTTP 404 error is returned
         """
-        @wraps(rh_method)
         @inlineCallbacks
+        @wraps(rh_method)
         def _wrapper(self, *args, **kwargs):
             # In case the specified input_schema is ``None``, we
             #   don't json.loads the input, but just set it to ``None``
@@ -81,12 +81,10 @@ def validate(input_schema=None, output_schema=None,
             #   as self.body
             setattr(self, "body", input_)
             # Call the requesthandler method
-            output = rh_method(self, *args, **kwargs)
+            output = yield maybeDeferred(rh_method, self, *args, **kwargs)
             # If the rh_method returned a Future a la `raise Return(value)`
             #   we grab the output.
             # if is_future(output):
-            output = yield maybeDeferred(output)
-
             # if output is empty, auto return the error 404.
             if not output and on_empty_404:
                 raise APIError(404, "Resource not found.")

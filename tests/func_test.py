@@ -119,33 +119,35 @@ class APIFunctionalTest(cyclone.testing.CycloneTestCase):
 
     def test_synchronous_handler(self):
         def _cb(r):
-            self.assertEqual(r.code, 200)
+            self.assertEqual(r.get_status(), 200)
             self.assertEqual(
-                jl(r.body)["data"],
+                jl(r.content)["data"],
                 "Hello world!"
             )
         d = self.client.get(
             "/api/helloworld"
         )
         d.addCallback(_cb)
+        return d
 
     def test_asynchronous_handler(self):
         def _cb(r):
-            self.assertEqual(r.code, 200)
+            self.assertEqual(r.get_status(), 200)
             self.assertEqual(
-                jl(r.body)["data"],
+                jl(r.content)["data"],
                 "Hello (asynchronous) world! My name is name."
             )
         d = self.client.get(
             "/api/asynchelloworld/name"
         )
         d.addCallback(_cb)
+        return d
 
     def test_post_request(self):
         def _cb(r):
-            self.assertEqual(r.code, 200)
+            self.assertEqual(r.get_status(), 200)
             self.assertEqual(
-                jl(r.body)["data"]["message"],
+                jl(r.content)["data"]["message"],
                 "Very Important Post-It Note was posted."
             )
 
@@ -159,72 +161,80 @@ class APIFunctionalTest(cyclone.testing.CycloneTestCase):
             })
         )
         d.addCallback(_cb)
+        return d
 
     def test_url_pattern_route(self):
         def _cb(r):
-            self.assertEqual(r.code, 200)
+            self.assertEqual(r.get_status(), 200)
             self.assertEqual(
-                jl(r.body)["data"],
+                jl(r.content)["data"],
                 "Greetings, John Smith!"
             )
         d = self.client.get(
             "/api/greeting/John/Smith"
         )
         d.addCallback(_cb)
+        return d
 
-    def test_write_error(self):
+    def test_malformed_output(self):
         # Test malformed output
-        def _cb1(r):
-            self.assertEqual(r.code, 500)
+        def _cb(r):
+            self.assertEqual(r.get_status(), 500)
             self.assertEqual(
-                jl(r.body)["status"],
+                jl(r.content)["status"],
                 "error"
             )
-        d1 = self.client.get(
+        d = self.client.get(
             "/api/explodinghandler"
         )
-        d1.addCallback(_cb1)
+        d.addCallback(_cb)
+        return d
 
+    def test_malformed_input(self):
         # Test malformed input
-        def _cb2(r):
-            self.assertEqual(r.code, 400)
+        def _cb(r):
+            self.assertEqual(r.get_status(), 400)
             self.assertEqual(
-                jl(r.body)["status"],
+                jl(r.content)["status"],
                 "fail"
             )
-        d2 = self.client.post(
+        d = self.client.post(
             "/api/explodinghandler",
             # method="POST",
             body='"Yup", "this is going to end badly."]'
         )
-        d2.addCallback(_cb2)
+        d.addCallback(_cb)
+        return d
 
-    def test_empty_resource(self):
+    def test_empty_output(self):
         # Test empty output
-        def _cb1(r):
-            self.assertEqual(r.code, 404)
+        def _cb(r):
+            self.assertEqual(r.get_status(), 404)
             self.assertEqual(
-                jl(r.body)["status"],
+                jl(r.content)["status"],
                 "fail"
             )
-        d1 = self.client.get(
+        d = self.client.get(
             "/api/notfoundhandler"
         )
-        d1.addCallback(_cb1)
+        d.addCallback(_cb)
+        return d
 
+    def test_empty_output_on_empty_404(self):
         # Test empty output on_empty_404 is False
-        def _cb2(r):
-            self.assertEqual(r.code, 500)
+        def _cb(r):
+            self.assertEqual(r.get_status(), 500)
             self.assertEqual(
-                jl(r.body)["status"],
+                jl(r.content)["status"],
                 "error"
             )
-        d2 = self.client.post(
+        d = self.client.post(
             "/api/notfoundhandler",
             # method="POST",
             body="1"
         )
-        d2.addCallback(_cb2)
+        d.addCallback(_cb)
+        return d
 
     # def test_view_db_conn(self):
     #     r = self.fetch(

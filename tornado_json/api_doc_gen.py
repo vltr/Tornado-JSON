@@ -5,7 +5,7 @@ import inspect
 
 try:
     from itertools import imap as map  # PY2
-except ImportError:
+except ImportError: # pragma: no cover
     pass
 
 import cyclone.web
