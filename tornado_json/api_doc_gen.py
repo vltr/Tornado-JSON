@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import json
 import inspect
 
@@ -6,7 +8,7 @@ try:
 except ImportError:
     pass
 
-import tornado.web
+import cyclone.web
 from jsonschema import validate, ValidationError
 
 from tornado_json.utils import is_method
@@ -53,14 +55,14 @@ def _get_rh_methods(rh):
 def _get_tuple_from_route(route):
     """Return (pattern, handler_class) tuple from ``route``
 
-    :type route: tuple|tornado.web.URLSpec
+    :type route: tuple|cyclone.web.URLSpec
     :rtype: tuple
     :raises TypeError: If ``route`` is not a tuple or URLSpec
     """
     if isinstance(route, tuple):
         assert len(route) >= 2
         pattern, handler_class = route[:2]
-    elif isinstance(route, tornado.web.URLSpec):
+    elif isinstance(route, cyclone.web.URLSpec):
         pattern, handler_class = route.regex.pattern, route.handler_class
     else:
         raise TypeError("Unknown route type '{}'"

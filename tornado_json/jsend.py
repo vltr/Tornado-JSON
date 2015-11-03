@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+
 class JSendMixin(object):
     """http://labs.omniti.com/labs/jsend
 

@@ -1,4 +1,9 @@
-from tornado import gen
+# -*- coding: utf-8 -*-
+
+# from tornado import gen
+
+from twisted.internet import threads
+from twisted.internet.defer import returnValue
 
 from tornado_json.requesthandlers import APIHandler
 from tornado_json import schema
@@ -93,7 +98,8 @@ class AsyncHelloWorld(APIHandler):
     def get(self, name):
         """Shouts hello to the world (asynchronously)!"""
         # Asynchronously yield a result from a method
-        res = yield gen.Task(self.hello, name)
+        # res = yield gen.Task(self.hello, name)
+        res = yield threads.deferToThread(self.hello, name)
 
         # When using the `schema.validate` decorator asynchronously,
         #   we can return the output desired by raising
@@ -105,7 +111,8 @@ class AsyncHelloWorld(APIHandler):
         # http://www.tornadoweb.org/en/branch3.2/gen.html#tornado.gen.Return
 
         # return res  # Python 3.3
-        raise gen.Return(res)  # Python 2.7
+        # raise gen.Return(res)  # Python 2.7
+        returnValue(res)
 
 
 class FreeWilledHandler(APIHandler):

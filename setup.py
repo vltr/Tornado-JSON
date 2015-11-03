@@ -1,6 +1,10 @@
+# -*- coding: utf-8 -*-
+
 import os
 import sys
+
 __DIR__ = os.path.abspath(os.path.dirname(__file__))
+
 import codecs
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
@@ -41,9 +45,9 @@ setup(
     description=('A simple JSON API framework based on Tornado'),
     long_description=long_description,
     packages=['tornado_json'],
-    install_requires = install_requires,
+    install_requires=install_requires,
     tests_require=['pytest'],
-    cmdclass = {'test': Pytest},
+    cmdclass={'test': Pytest},
     data_files=[
         # Populate this with any files config files etc.
     ],

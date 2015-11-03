@@ -26,3 +26,5 @@ dist
 .coverage
 .tox/
 API_Documentation.md
+.python-version
+.cache

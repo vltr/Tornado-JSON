@@ -1,4 +1,6 @@
-from tornado.web import HTTPError
+# -*- coding: utf-8 -*-
+
+from cyclone.web import HTTPError
 
 
 class APIError(HTTPError):

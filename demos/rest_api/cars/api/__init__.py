@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from tornado_json.requesthandlers import APIHandler
 
 

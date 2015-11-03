@@ -6,7 +6,8 @@ sys.path.append("../../")
 # ---- Can be removed if Tornado-JSON is installed ----#
 
 import json
-import tornado.ioloop
+# import tornado.ioloop
+from twisted.internet import reactor
 from tornado_json.routes import get_routes
 from tornado_json.application import Application
 
@@ -27,8 +28,10 @@ def main():
     application = Application(routes=routes, settings={})
 
     # Start the application on port 8888
-    application.listen(8888)
-    tornado.ioloop.IOLoop.instance().start()
+    # application.listen(8888)
+    reactor.listenTCP(8888, application)
+    # tornado.ioloop.IOLoop.instance().start()
+    reactor.run()
 
 
 if __name__ == '__main__':

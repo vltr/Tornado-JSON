@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import pyclbr
 import pkgutil
 import importlib
@@ -74,10 +76,8 @@ def get_module_routes(module_name, custom_routes=None, exclusions=None,
     :param arg_pattern: Default pattern for extra arguments of any method
     """
     def has_method(module, cls_name, method_name):
-        return all([
-            method_name in vars(getattr(module, cls_name)),
+        return method_name in vars(getattr(module, cls_name)) and \
             is_method(reduce(getattr, [module, cls_name, method_name]))
-        ])
 
     def yield_args(module, cls_name, method_name):
         """Get signature of ``module.cls_name.method_name``

@@ -1,17 +1,20 @@
+# -*- coding: utf-8 -*-
+
 import json
 from functools import wraps
 
 import jsonschema
-import tornado.gen
+# import tornado.gen
+from twisted.internet.defer import inlineCallbacks, maybeDeferred
 
 from tornado_json.exceptions import APIError
 
-try:
-    from tornado.concurrent import is_future
-except ImportError:
-    # For tornado 3.x.x
-    from tornado.concurrent import Future
-    is_future = lambda x: isinstance(x, Future)
+# try:
+#     from tornado.concurrent import is_future
+# except ImportError:
+#     # For tornado 3.x.x
+#     from tornado.concurrent import Future
+#     is_future = lambda x: isinstance(x, Future)
 
 from tornado_json.utils import container
 
@@ -48,7 +51,7 @@ def validate(input_schema=None, output_schema=None,
             on_empty_404 is True, an HTTP 404 error is returned
         """
         @wraps(rh_method)
-        @tornado.gen.coroutine
+        @inlineCallbacks
         def _wrapper(self, *args, **kwargs):
             # In case the specified input_schema is ``None``, we
             #   don't json.loads the input, but just set it to ``None``
@@ -81,8 +84,8 @@ def validate(input_schema=None, output_schema=None,
             output = rh_method(self, *args, **kwargs)
             # If the rh_method returned a Future a la `raise Return(value)`
             #   we grab the output.
-            if is_future(output):
-                output = yield output
+            # if is_future(output):
+            output = yield maybeDeferred(output)
 
             # if output is empty, auto return the error 404.
             if not output and on_empty_404:

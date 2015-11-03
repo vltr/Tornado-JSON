@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
+
 import sys
 import os
 
 import pytest
-from tornado.web import URLSpec
+from cyclone.web import URLSpec
 
 from .utils import handle_import_error
 
@@ -36,7 +38,6 @@ def test__get_tuple_from_route():
     # Test malformed tuple (i.e., smaller length than 2)
     with pytest.raises(AssertionError):
         _get_tuple_from_route(("foobar",))
-
 
 
 def test__get_api_docs():

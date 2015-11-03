@@ -1,7 +1,14 @@
+# -*- coding: utf-8 -*-
+
 import sys
 import json
 
-from tornado.testing import AsyncHTTPTestCase
+# from tornado.testing import AsyncHTTPTestCase
+# from cyclone.testing import CycloneTestCase
+import cyclone.testing
+import cyclone.httpclient
+from twisted.internet import defer
+from twisted.internet.defer import returnValue
 
 from .utils import handle_import_error
 
@@ -25,20 +32,20 @@ def jl(s):
     return json.loads(s.decode("utf-8"))
 
 
-class DummyView(requesthandlers.ViewHandler):
-    """Dummy ViewHandler for coverage"""
-    def delete(self):
-        # Reference db_conn to test for AttributeError
-        self.db_conn
+# class DummyView(requesthandlers.ViewHandler):
+#     """Dummy ViewHandler for coverage"""
+#     def delete(self):
+#         # Reference db_conn to test for AttributeError
+#         self.db_conn
 
 
-class DBTestHandler(requesthandlers.APIHandler):
-    """APIHandler for testing db_conn"""
-    def get(self):
-        # Set application.db_conn to test if db_conn BaseHandler
-        #   property works
-        self.application.db_conn = {"data": "Nothing to see here."}
-        self.success(self.db_conn.get("data"))
+# class DBTestHandler(requesthandlers.APIHandler):
+#     """APIHandler for testing db_conn"""
+#     def get(self):
+#         # Set application.db_conn to test if db_conn BaseHandler
+#         #   property works
+#         self.application.db_conn = {"data": "Nothing to see here."}
+#         self.success(self.db_conn.get("data"))
 
 
 class ExplodingHandler(requesthandlers.APIHandler):
@@ -95,133 +102,151 @@ class NotFoundHandler(requesthandlers.APIHandler):
         return {}
 
 
-class APIFunctionalTest(AsyncHTTPTestCase):
+class APIFunctionalTest(cyclone.testing.CycloneTestCase):
 
-    def get_app(self):
+    def app_builder(self):
         rts = routes.get_routes(helloworld)
         rts += [
             ("/api/explodinghandler", ExplodingHandler),
             ("/api/notfoundhandler", NotFoundHandler),
-            ("/views/someview", DummyView),
-            ("/api/dbtest", DBTestHandler)
+            # ("/views/someview", DummyView),
+            # ("/api/dbtest", DBTestHandler)
         ]
         return application.Application(
             routes=rts,
             settings={"debug": True},
-            db_conn=None
         )
 
     def test_synchronous_handler(self):
-        r = self.fetch(
+        def _cb(r):
+            self.assertEqual(r.code, 200)
+            self.assertEqual(
+                jl(r.body)["data"],
+                "Hello world!"
+            )
+        d = self.client.get(
             "/api/helloworld"
         )
-        self.assertEqual(r.code, 200)
-        self.assertEqual(
-            jl(r.body)["data"],
-            "Hello world!"
-        )
+        d.addCallback(_cb)
 
     def test_asynchronous_handler(self):
-        r = self.fetch(
+        def _cb(r):
+            self.assertEqual(r.code, 200)
+            self.assertEqual(
+                jl(r.body)["data"],
+                "Hello (asynchronous) world! My name is name."
+            )
+        d = self.client.get(
             "/api/asynchelloworld/name"
         )
-        self.assertEqual(r.code, 200)
-        self.assertEqual(
-            jl(r.body)["data"],
-            "Hello (asynchronous) world! My name is name."
-        )
+        d.addCallback(_cb)
 
     def test_post_request(self):
-        r = self.fetch(
+        def _cb(r):
+            self.assertEqual(r.code, 200)
+            self.assertEqual(
+                jl(r.body)["data"]["message"],
+                "Very Important Post-It Note was posted."
+            )
+
+        d = self.client.post(
             "/api/postit",
-            method="POST",
+            # method="POST",
             body=jd({
                 "title": "Very Important Post-It Note",
                 "body": "Equally important message",
                 "index": 0
             })
         )
-        self.assertEqual(r.code, 200)
-        self.assertEqual(
-            jl(r.body)["data"]["message"],
-            "Very Important Post-It Note was posted."
-        )
+        d.addCallback(_cb)
 
     def test_url_pattern_route(self):
-        r = self.fetch(
+        def _cb(r):
+            self.assertEqual(r.code, 200)
+            self.assertEqual(
+                jl(r.body)["data"],
+                "Greetings, John Smith!"
+            )
+        d = self.client.get(
             "/api/greeting/John/Smith"
         )
-        self.assertEqual(r.code, 200)
-        self.assertEqual(
-            jl(r.body)["data"],
-            "Greetings, John Smith!"
-        )
+        d.addCallback(_cb)
 
     def test_write_error(self):
         # Test malformed output
-        r = self.fetch(
+        def _cb1(r):
+            self.assertEqual(r.code, 500)
+            self.assertEqual(
+                jl(r.body)["status"],
+                "error"
+            )
+        d1 = self.client.get(
             "/api/explodinghandler"
         )
-        self.assertEqual(r.code, 500)
-        self.assertEqual(
-            jl(r.body)["status"],
-            "error"
-        )
+        d1.addCallback(_cb1)
+
         # Test malformed input
-        r = self.fetch(
+        def _cb2(r):
+            self.assertEqual(r.code, 400)
+            self.assertEqual(
+                jl(r.body)["status"],
+                "fail"
+            )
+        d2 = self.client.post(
             "/api/explodinghandler",
-            method="POST",
+            # method="POST",
             body='"Yup", "this is going to end badly."]'
         )
-        self.assertEqual(r.code, 400)
-        self.assertEqual(
-            jl(r.body)["status"],
-            "fail"
-        )
+        d2.addCallback(_cb2)
 
     def test_empty_resource(self):
         # Test empty output
-        r = self.fetch(
+        def _cb1(r):
+            self.assertEqual(r.code, 404)
+            self.assertEqual(
+                jl(r.body)["status"],
+                "fail"
+            )
+        d1 = self.client.get(
             "/api/notfoundhandler"
         )
-        self.assertEqual(r.code, 404)
-        self.assertEqual(
-            jl(r.body)["status"],
-            "fail"
-        )
+        d1.addCallback(_cb1)
+
         # Test empty output on_empty_404 is False
-        r = self.fetch(
+        def _cb2(r):
+            self.assertEqual(r.code, 500)
+            self.assertEqual(
+                jl(r.body)["status"],
+                "error"
+            )
+        d2 = self.client.post(
             "/api/notfoundhandler",
-            method="POST",
+            # method="POST",
             body="1"
         )
-        self.assertEqual(r.code, 500)
-        self.assertEqual(
-            jl(r.body)["status"],
-            "error"
-        )
+        d2.addCallback(_cb2)
 
-    def test_view_db_conn(self):
-        r = self.fetch(
-            "/views/someview",
-            method="DELETE"
-        )
-        self.assertEqual(r.code, 500)
-        self.assertTrue(
-            "No database connection was provided." in r.body.decode("UTF-8")
-        )
+    # def test_view_db_conn(self):
+    #     r = self.fetch(
+    #         "/views/someview",
+    #         method="DELETE"
+    #     )
+    #     self.assertEqual(r.code, 500)
+    #     self.assertTrue(
+    #         "No database connection was provided." in r.body.decode("UTF-8")
+    #     )
 
-    def test_db_conn(self):
-        r = self.fetch(
-            "/api/dbtest",
-            method="GET"
-        )
-        self.assertEqual(r.code, 200)
-        print(r.body)
-        self.assertEqual(
-            jl(r.body)["status"],
-            "success"
-        )
-        self.assertTrue(
-            "Nothing to see here." in jl(r.body)["data"]
-        )
+    # def test_db_conn(self):
+    #     r = self.fetch(
+    #         "/api/dbtest",
+    #         method="GET"
+    #     )
+    #     self.assertEqual(r.code, 200)
+    #     print(r.body)
+    #     self.assertEqual(
+    #         jl(r.body)["status"],
+    #         "success"
+    #     )
+    #     self.assertTrue(
+    #         "Nothing to see here." in jl(r.body)["data"]
+    #     )

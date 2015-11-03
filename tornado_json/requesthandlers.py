@@ -1,4 +1,6 @@
-from tornado.web import RequestHandler
+# -*- coding: utf-8 -*-
+
+from cyclone.web import RequestHandler
 from jsonschema import ValidationError
 
 from tornado_json.jsend import JSendMixin
@@ -11,16 +13,16 @@ class BaseHandler(RequestHandler):
     __url_names__ = ["__self__"]
     __urls__ = []
 
-    @property
-    def db_conn(self):
-        """Returns database connection abstraction
+    # @property
+    # def db_conn(self):
+    #     """Returns database connection abstraction
 
-        If no database connection is available, raises an AttributeError
-        """
-        db_conn = self.application.db_conn
-        if not db_conn:
-            raise AttributeError("No database connection was provided.")
-        return db_conn
+    #     If no database connection is available, raises an AttributeError
+    #     """
+    #     db_conn = self.application.db_conn
+    #     if not db_conn:
+    #         raise AttributeError("No database connection was provided.")
+    #     return db_conn
 
 
 class ViewHandler(BaseHandler):
