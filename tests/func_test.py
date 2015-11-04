@@ -10,10 +10,10 @@ from .utils import handle_import_error
 
 try:
     sys.path.append('.')
-    from tornado_json import routes
-    from tornado_json import schema
-    from tornado_json import application
-    from tornado_json import requesthandlers
+    from shissen import routes
+    from shissen import schema
+    from shissen import application
+    from shissen import requesthandlers
     sys.path.append('demos/helloworld')
     import helloworld
 except ImportError as err:

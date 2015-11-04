@@ -10,10 +10,10 @@ from .utils import handle_import_error
 
 try:
     sys.path.append('.')
-    from tornado_json.api_doc_gen import _get_tuple_from_route
-    from tornado_json.api_doc_gen import get_api_docs
-    from tornado_json.api_doc_gen import _get_notes
-    from tornado_json.routes import get_routes
+    from shissen.api_doc_gen import _get_tuple_from_route
+    from shissen.api_doc_gen import get_api_docs
+    from shissen.api_doc_gen import _get_notes
+    from shissen.routes import get_routes
     sys.path.append("demos/helloworld")
     import helloworld
 except ImportError as err:
@@ -21,7 +21,7 @@ except ImportError as err:
 
 
 def test__get_tuple_from_route():
-    """Test tornado_json.api_doc_gen._get_tuple_from_route"""
+    """Test shissen.api_doc_gen._get_tuple_from_route"""
     pattern = r"/$"
     handler_class = object
     expected_output = (pattern, handler_class)

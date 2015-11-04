@@ -1,1 +1,1 @@
-"""Test module for tornado_json"""
+"""Test module for shissen"""

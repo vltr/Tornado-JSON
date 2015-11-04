@@ -2,9 +2,9 @@
 
 from twisted.internet.defer import maybeDeferred
 
-from tornado_json.requesthandlers import APIHandler
-from tornado_json import schema
-from tornado_json.gen import coroutine
+from shissen.requesthandlers import APIHandler
+from shissen import schema
+from shissen.async import asynchronous
 
 
 class HelloWorldHandler(APIHandler):
@@ -89,9 +89,9 @@ class AsyncHelloWorld(APIHandler):
         output_schema={"type": "string"},
         output_example="Hello (asynchronous) world! My name is Fred."
     )
-    # ``tornado_json.gen.coroutine`` must be used for coroutines
-    # ``tornado.gen.coroutine`` CANNOT be used directly
-    @coroutine
+    # ``shissen.async.asynchronous`` must be used for deferreds
+    # ``cyclone.web.asynchronous`` CANNOT be used directly
+    @asynchronous
     def get(self, name):
         """Shouts hello to the world (asynchronously)!"""
         # Asynchronously yield a result from a method
@@ -105,7 +105,7 @@ class FreeWilledHandler(APIHandler):
     #   they definitely can.
     def get(self):
         # If you don't know where `self.success` comes from, it is defined
-        #   in the `JSendMixin` mixin in tornado_json.jsend. `APIHandler`
+        #   in the `JSendMixin` mixin in shissen.jsend. `APIHandler`
         #   inherits from this and thus gets the methods.
         self.success("I don't need no stinkin' schema validation.")
         # If you're feeling really bold, you could even skip JSend

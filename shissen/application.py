@@ -2,7 +2,7 @@
 
 import cyclone.web
 
-from tornado_json.api_doc_gen import api_doc_gen
+from shissen.api_doc_gen import api_doc_gen
 
 
 class Application(cyclone.web.Application):

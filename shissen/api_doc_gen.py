@@ -11,9 +11,9 @@ except ImportError:  # pragma: no cover
 import cyclone.web
 from jsonschema import validate, ValidationError
 
-from tornado_json.utils import is_method
-from tornado_json.constants import HTTP_METHODS
-from tornado_json.requesthandlers import APIHandler
+from shissen.utils import is_method
+from shissen.constants import HTTP_METHODS
+from shissen.requesthandlers import APIHandler
 
 
 def _validate_example(rh, method, example_type):

@@ -4,11 +4,12 @@ import pyclbr
 import pkgutil
 import importlib
 import inspect
+
 from itertools import chain
 from functools import reduce
 
-from tornado_json.constants import HTTP_METHODS
-from tornado_json.utils import extract_method, is_method, is_handler_subclass
+from shissen.constants import HTTP_METHODS
+from shissen.utils import extract_method, is_method, is_handler_subclass
 
 
 def get_routes(package):
@@ -91,7 +92,7 @@ def get_module_routes(module_name, custom_routes=None, exclusions=None,
         wrapped_method = reduce(getattr, [module, cls_name, method_name])
         method = extract_method(wrapped_method)
 
-        # If using tornado_json.gen.coroutine, original args are annotated...
+        # If using shissen.async.asynchronous, original args are annotated...
         argspec_args = getattr(method, "__argspec_args",
                                # otherwise just grab them from the method
                                inspect.getargspec(method).args)

@@ -8,7 +8,7 @@ __DIR__ = os.path.abspath(os.path.dirname(__file__))
 import codecs
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
-import tornado_json
+import shissen
 
 
 def read(filename):
@@ -32,19 +32,18 @@ class Pytest(TestCommand):
         # Import here, cause outside the eggs aren't loaded
         import pytest
         errcode = pytest.main(self.test_args)
-
         sys.exit(errcode)
 
 
 setup(
-    name="Tornado-JSON",
-    version=tornado_json.__version__,
-    url='https://github.com/hfaran/Tornado-JSON',
+    name="shissen",
+    version=shissen.__version__,
+    url='https://github.com/vltr/shissen',
     license='MIT License',
-    author='Hamza Faran',
-    description=('A simple JSON API framework based on Tornado'),
+    author='Richard Kuesters',
+    description=('A simple JSON API framework based on Cyclone'),
     long_description=long_description,
-    packages=['tornado_json'],
+    packages=['shissen'],
     install_requires=install_requires,
     tests_require=['pytest'],
     cmdclass={'test': Pytest},
@@ -52,14 +51,13 @@ setup(
         # Populate this with any files config files etc.
     ],
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 3 - Alpha",
+        "Framework :: Twisted",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.3",
-        "Programming Language :: Python :: 3.4",
         "Topic :: Software Development :: Libraries :: Application Frameworks",
     ]
 )

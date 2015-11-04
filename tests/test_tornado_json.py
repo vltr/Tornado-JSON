@@ -8,10 +8,10 @@ from .utils import handle_import_error
 
 try:
     sys.path.append('.')
-    from tornado_json import routes
-    from tornado_json import schema
-    from tornado_json import exceptions
-    from tornado_json import jsend
+    from shissen import routes
+    from shissen import schema
+    from shissen import exceptions
+    from shissen import jsend
     sys.path.append('demos/helloworld')
     sys.path.append('demos/rest_api')
     import helloworld
@@ -38,11 +38,11 @@ class MockRequestHandler(object):
         raise SuccessException
 
 
-class TestTornadoJSONBase(object):
-    """Base class for all tornado_json test classes"""
+class TestShissenJSONBase(object):
+    """Base class for all shissen test classes"""
 
 
-class TestRoutes(TestTornadoJSONBase):
+class TestRoutes(TestShissenJSONBase):
     """Tests the routes module"""
 
     def test_get_routes(self):
@@ -85,7 +85,7 @@ class TestRoutes(TestTornadoJSONBase):
         ])
 
 
-class TestUtils(TestTornadoJSONBase):
+class TestUtils(TestShissenJSONBase):
     """Tests the utils module"""
 
     def test_api_assert(self):
@@ -156,7 +156,7 @@ class TestUtils(TestTornadoJSONBase):
     #         rh.post()
 
 
-class TestJSendMixin(TestTornadoJSONBase):
+class TestJSendMixin(TestShissenJSONBase):
     """Tests the JSendMixin module"""
 
     class MockJSendMixinRH(jsend.JSendMixin):

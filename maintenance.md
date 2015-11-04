@@ -15,11 +15,10 @@
 
 * Generate/update base docs/ folder with Sphinx
 
-    ```sphinx-apidoc -F -o docs tornado_json```
+    ```sphinx-apidoc -F -o docs shissen```
 
 * Run tests from root project directory
 
-    * `py.test --cov="tornado_json" --cov-report=term --cov-report=html`
-    * `nosetests --with-cov --cov-report term-missing --cov tornado_json tests/`
-    * With `tox>=1.8.0` installed for both py27 and py34
-        * `sudo tox  # runs test matrix with py27,py34 and tornado322,402`
+    * `py.test --cov="shissen" --cov-report=term --cov-report=html`
+    * `nosetests --with-cov --cov-report term-missing --cov shissen tests/`
+    * With `tox>=1.8.0` installed for py27

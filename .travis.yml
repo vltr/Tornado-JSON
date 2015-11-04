@@ -1,20 +1,17 @@
 language: python
 python:
     - "2.7"
-    - "3.3"
-    - "3.4"
 env:
-    - TORNADO_VERSION=3.1.1
-    - TORNADO_VERSION=4.0.2
+    - cyclone
 install:
     - "pip install -r requirements.txt --use-mirrors"
-    - "pip install tornado>=$TORNADO_VERSION"
+    - "pip install https://github.com/vltr/cyclone/archive/master.zip"
     - "pip install pytest"
     - "pip install pytest-cov"
     - "pip install coverage"
     - "pip install coveralls"
     - "pip install mock"
 script:
-    coverage run --source=tornado_json setup.py test
+    coverage run --source=shissen setup.py test
 after_success:
     coveralls --verbose

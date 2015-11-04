@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from tornado_json.requesthandlers import APIHandler
+from shissen.requesthandlers import APIHandler
 
 
 DATA = {

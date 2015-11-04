@@ -7,9 +7,9 @@ from twisted.internet import reactor
 from twisted.python import log
 # ---- The following so demo can be run without having to install package ----#
 sys.path.append("../../")
-# ---- Can be removed if Tornado-JSON is installed ----#
-from tornado_json.routes import get_routes
-from tornado_json.application import Application
+# ---- Can be removed if shissen is installed ----#
+from shissen.routes import get_routes
+from shissen.application import Application
 
 
 def main():

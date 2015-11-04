@@ -6,12 +6,12 @@ import json
 
 from twisted.internet import reactor
 sys.path.append("../../")
-# ---- Can be removed if Tornado-JSON is installed ----#
+# ---- Can be removed if shissen is installed ----#
 # This module contains essentially the same boilerplate
 #   as the corresponding one in the helloworld example;
 #   refer to that for details.
-from tornado_json.routes import get_routes
-from tornado_json.application import Application
+from shissen.routes import get_routes
+from shissen.application import Application
 
 
 def main():

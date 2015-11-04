@@ -6,8 +6,8 @@ from functools import wraps
 import jsonschema
 from twisted.internet.defer import inlineCallbacks, maybeDeferred
 
-from tornado_json.exceptions import APIError
-from tornado_json.utils import container
+from shissen.exceptions import APIError
+from shissen.utils import container
 
 
 def validate(input_schema=None, output_schema=None,

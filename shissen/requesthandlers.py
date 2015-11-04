@@ -4,8 +4,8 @@ from cyclone.web import RequestHandler
 from twisted.python.failure import Failure
 from jsonschema import ValidationError
 
-from tornado_json.jsend import JSendMixin
-from tornado_json.exceptions import APIError
+from shissen.jsend import JSendMixin
+from shissen.exceptions import APIError
 
 
 class BaseHandler(RequestHandler):
