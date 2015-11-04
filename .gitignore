@@ -28,3 +28,5 @@ dist
 API_Documentation.md
 .python-version
 .cache
+_trial_temp
+htmlcov
