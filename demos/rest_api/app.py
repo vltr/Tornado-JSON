@@ -2,16 +2,14 @@
 
 # ---- The following so demo can be run without having to install package ----#
 import sys
+import json
+
+from twisted.internet import reactor
 sys.path.append("../../")
 # ---- Can be removed if Tornado-JSON is installed ----#
-
 # This module contains essentially the same boilerplate
 #   as the corresponding one in the helloworld example;
 #   refer to that for details.
-
-import json
-# import tornado.ioloop
-from twisted.internet import reactor
 from tornado_json.routes import get_routes
 from tornado_json.application import Application
 
@@ -24,10 +22,7 @@ def main():
         indent=2)
     )
     application = Application(routes=routes, settings={})
-
-    # application.listen(8888)
     reactor.listenTCP(8888, application)
-    # tornado.ioloop.IOLoop.instance().start()
     reactor.run()
 
 

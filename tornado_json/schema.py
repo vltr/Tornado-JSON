@@ -4,18 +4,9 @@ import json
 from functools import wraps
 
 import jsonschema
-# import tornado.gen
 from twisted.internet.defer import inlineCallbacks, maybeDeferred
 
 from tornado_json.exceptions import APIError
-
-# try:
-#     from tornado.concurrent import is_future
-# except ImportError:
-#     # For tornado 3.x.x
-#     from tornado.concurrent import Future
-#     is_future = lambda x: isinstance(x, Future)
-
 from tornado_json.utils import container
 
 
@@ -50,8 +41,8 @@ def validate(input_schema=None, output_schema=None,
         :raises APIError: If the output is a falsy value and
             on_empty_404 is True, an HTTP 404 error is returned
         """
-        @inlineCallbacks
         @wraps(rh_method)
+        @inlineCallbacks
         def _wrapper(self, *args, **kwargs):
             # In case the specified input_schema is ``None``, we
             #   don't json.loads the input, but just set it to ``None``
@@ -81,10 +72,10 @@ def validate(input_schema=None, output_schema=None,
             #   as self.body
             setattr(self, "body", input_)
             # Call the requesthandler method
-            output = yield maybeDeferred(rh_method, self, *args, **kwargs)
-            # If the rh_method returned a Future a la `raise Return(value)`
-            #   we grab the output.
-            # if is_future(output):
+            output = yield maybeDeferred(lambda: rh_method(self, *args, **kwargs))
+
+            if hasattr(output, 'next'):  # generator!
+                output = output.next().result
             # if output is empty, auto return the error 404.
             if not output and on_empty_404:
                 raise APIError(404, "Resource not found.")

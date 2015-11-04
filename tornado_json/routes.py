@@ -190,8 +190,8 @@ def get_module_routes(module_name, custom_routes=None, exclusions=None,
         #    * the superclass is in the list of supers we want
         #    * the requesthandler isn't already paired in custom_routes
         #    * the requesthandler isn't manually excluded
-        if is_handler_subclass(cls)
-        and cls_name not in (custom_routes_s + exclusions)
+        if is_handler_subclass(cls) and
+        cls_name not in (custom_routes_s + exclusions)
     ]))
 
     routes = auto_routes + custom_routes

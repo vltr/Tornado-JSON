@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from cyclone.web import RequestHandler
+from twisted.python.failure import Failure
 from jsonschema import ValidationError
 
 from tornado_json.jsend import JSendMixin
@@ -51,7 +52,10 @@ class APIHandler(BaseHandler, JSendMixin):
         # __str__ representation.
         # All other exceptions result in a JSend error being written back,
         # with log_message only written if debug mode is enabled
-        exception = kwargs["exc_info"][1]
+        exception = kwargs["exception"]
+        if isinstance(exception, Failure):
+            exception = exception.value
+
         if any(isinstance(exception, c) for c in [APIError, ValidationError]):
             # ValidationError is always due to a malformed request
             if isinstance(exception, ValidationError):

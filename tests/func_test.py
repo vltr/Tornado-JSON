@@ -3,12 +3,8 @@
 import sys
 import json
 
-# from tornado.testing import AsyncHTTPTestCase
-# from cyclone.testing import CycloneTestCase
 import cyclone.testing
 import cyclone.httpclient
-from twisted.internet import defer
-from twisted.internet.defer import returnValue
 
 from .utils import handle_import_error
 
@@ -30,22 +26,6 @@ def jd(obj):
 
 def jl(s):
     return json.loads(s.decode("utf-8"))
-
-
-# class DummyView(requesthandlers.ViewHandler):
-#     """Dummy ViewHandler for coverage"""
-#     def delete(self):
-#         # Reference db_conn to test for AttributeError
-#         self.db_conn
-
-
-# class DBTestHandler(requesthandlers.APIHandler):
-#     """APIHandler for testing db_conn"""
-#     def get(self):
-#         # Set application.db_conn to test if db_conn BaseHandler
-#         #   property works
-#         self.application.db_conn = {"data": "Nothing to see here."}
-#         self.success(self.db_conn.get("data"))
 
 
 class ExplodingHandler(requesthandlers.APIHandler):
@@ -109,8 +89,6 @@ class APIFunctionalTest(cyclone.testing.CycloneTestCase):
         rts += [
             ("/api/explodinghandler", ExplodingHandler),
             ("/api/notfoundhandler", NotFoundHandler),
-            # ("/views/someview", DummyView),
-            # ("/api/dbtest", DBTestHandler)
         ]
         return application.Application(
             routes=rts,
@@ -235,28 +213,3 @@ class APIFunctionalTest(cyclone.testing.CycloneTestCase):
         )
         d.addCallback(_cb)
         return d
-
-    # def test_view_db_conn(self):
-    #     r = self.fetch(
-    #         "/views/someview",
-    #         method="DELETE"
-    #     )
-    #     self.assertEqual(r.code, 500)
-    #     self.assertTrue(
-    #         "No database connection was provided." in r.body.decode("UTF-8")
-    #     )
-
-    # def test_db_conn(self):
-    #     r = self.fetch(
-    #         "/api/dbtest",
-    #         method="GET"
-    #     )
-    #     self.assertEqual(r.code, 200)
-    #     print(r.body)
-    #     self.assertEqual(
-    #         jl(r.body)["status"],
-    #         "success"
-    #     )
-    #     self.assertTrue(
-    #         "Nothing to see here." in jl(r.body)["data"]
-    #     )

@@ -1,13 +1,13 @@
 #!/usr/bin/env python2.7
 
-# ---- The following so demo can be run without having to install package ----#
 import sys
+import json
+
+from twisted.internet import reactor
+from twisted.python import log
+# ---- The following so demo can be run without having to install package ----#
 sys.path.append("../../")
 # ---- Can be removed if Tornado-JSON is installed ----#
-
-import json
-# import tornado.ioloop
-from twisted.internet import reactor
 from tornado_json.routes import get_routes
 from tornado_json.application import Application
 
@@ -24,13 +24,12 @@ def main():
         [(url, repr(rh)) for url, rh in routes],
         indent=2)
     )
+    log.startLogging(sys.stdout)
     # Create the application by passing routes and any settings
     application = Application(routes=routes, settings={})
 
     # Start the application on port 8888
-    # application.listen(8888)
     reactor.listenTCP(8888, application)
-    # tornado.ioloop.IOLoop.instance().start()
     reactor.run()
 
 
